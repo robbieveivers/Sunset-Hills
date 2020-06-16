@@ -1,16 +1,142 @@
 ﻿@page "/counter"
+@using System
+@using System.Collections.Generic;
+@using System.ComponentModel.DataAnnotations;
+@using System.ComponentModel.DataAnnotations.Schema;
+@using BlazorStrap;
+
 
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
+<p>Current email: @arrayInput</p>
+<p>Current array being pushed @buildings[1]</p>
+@for (int i = 0; i < buildings.Length; i++)
+{
+    <tr>
+        <td>@buildings[i]</td>
+    </tr>
+}
+<p>appling the logic</p>
+<button type="submit" class="btn btn-default" @onclick="SaveCurrentArray">Submit</button>
 
+@for (int i = 0; i < BuildinginView(buildings).Length; i++)
+{
+    <tr>
+        <td>@temp[i]</td>
+    </tr>
+}
+
+<p></p>
+<text>Help me Plz</text>
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
+<form role="form">
+    <div class="form-group">
+        <label class="control-label" for="exampleInputEmail">Array:</label>
+        <input type="number" class="form-control" id="exampleInputEmail" placeholder="Enter Array" @bind-value="arrayInput">
+    </div>
+    <button type="submit" class="btn btn-default" @onclick="SaveCurrentArray">Submit</button>
+</form>
+
+
+
+<BSButtonGroup DropdownDirection="DropdownDirection.Up" IsOpen="@IsOpen12">
+    <BSDropdownToggle Color="Color.Secondary" @onclick="onclick12">Dropup</BSDropdownToggle>
+    <BSDropdownMenu IsOpen="@IsOpen12">
+        <BSDropdownItem Href="javascript:void(0);">Action</BSDropdownItem>
+        <BSDropdownItem Href="javascript:void(0);">Another Action</BSDropdownItem>
+        <BSDropdownItem Href="javascript:void(0);">Yet Another Action</BSDropdownItem>
+    </BSDropdownMenu>
+</BSButtonGroup>
+<BSButtonGroup DropdownDirection="DropdownDirection.Up" IsOpen="@IsOpen13">
+    <BSButton Color="Color.Secondary">Split Dropup</BSButton>
+    <BSDropdownToggle IsSplit="true" Color="Color.Secondary" @onclick="onclick13"></BSDropdownToggle>
+    <BSDropdownMenu @bind-IsOpen="@IsOpen13">
+        <BSDropdownItem Href="javascript:void(0);">Action</BSDropdownItem>
+        <BSDropdownItem Href="javascript:void(0);">Another Action</BSDropdownItem>
+        <BSDropdownItem IsDivider="true"></BSDropdownItem>
+        <BSDropdownItem Href="javascript:void(0);">Yet Another Action</BSDropdownItem>
+    </BSDropdownMenu>
+</BSButtonGroup>
+
 @code {
+
+
+    private int[] buildings = { 2, 3, 4, 5, 3, 2 };
+
+    private string arrayInput;
+
+    private int[] temp = new int[10];
+
+    public int[] BuildinginView(int[] buildings)
+    {
+        int CurrentMaxHeight = 0;
+        int Viewcount = 0;
+        int[] BuildingWithView = new int[buildings.Length];
+        for (int i = 0; i < buildings.Length; i++)
+        {
+            if (buildings[i] > CurrentMaxHeight)
+            {
+                BuildingWithView[Viewcount] = buildings[i];
+                Viewcount++;
+                CurrentMaxHeight = buildings[i];
+            }
+        }
+        return BuildingWithView;
+    }
+
+    public void SaveCurrentArray()
+    {
+        temp = BuildinginView(buildings);
+    }
+
+
     private int currentCount = 0;
+
+    private bool IsOpen12;
+
+    private bool IsOpen13;
+
+    private void onclick12()
+    {
+        if (IsOpen12 == true)
+        {
+            IsOpen12 = false;
+        }
+        else
+        {
+            IsOpen12 = true;
+        }
+
+    }
+    private void onclick13()
+    {
+        if (IsOpen12 == true)
+        {
+            IsOpen12 = false;
+        }
+        else
+        {
+            IsOpen12 = true;
+        }
+
+    }
 
     private void IncrementCount()
     {
         currentCount++;
+    }
+
+    private FormsModel formsModelVal = new FormsModel();
+
+    public class FormsModel
+    {
+
+        public string Valid { get; set; }
+        //     [Required(AllowEmptyStrings = false, ErrorMessage = "Oh noes! that name is already taken")]
+        public string InValid { get; set; }
+        public string Blank { get; set; }
+        public string Email { get; set; } = "email@example.com";
     }
 }
