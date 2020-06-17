@@ -1,7 +1,70 @@
 ﻿@page "/"
+@using System
+@using System.Collections.Generic;
+@using System.ComponentModel.DataAnnotations;
+@using System.ComponentModel.DataAnnotations.Schema;
+@using BlazorStrap;
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<h1>Sunset Hills</h1>
+<p>Current ArrayInput: @arrayInput</p>
+<p>Current array being pushed</p>
+@for (int i = 0; i < buildings.Length; i++)
+{
+    <tr>
+        <td>@buildings[i]</td>
+    </tr>
+}
+<p>Appling the logic</p>
+<button type="submit" class="btn btn-default" @onclick="SaveCurrentArray">Submit</button>
+@for (int i = 0; i < BuildinginView(buildings).Length; i++)
+{
+    <tr>
+        <td>@temp[i]</td>
+    </tr>
+}
+<p></p>
+<form role="form">
+    <div class="form-group">
+        <label class="control-label" for="@buildings">Array:</label>
+        <input type="text" class="form-control" id="@buildings" placeholder="Enter Array" @bind-value="arrayInput">
+    </div>
+    <button type="button" class="btn btn-default" @onclick="SaveCurrentArray">Submit</button>
+</form>
+@code {
+    private int[] buildings = { 2, 3, 4, 5, 3, 2 };
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    private string arrayInput;
+
+    private int[] temp = new int[10];
+
+    public int[] BuildinginView(int[] buildings)
+    {
+        int CurrentMaxHeight = 0;
+        int Viewcount = 0;
+        int[] BuildingWithView = new int[buildings.Length];
+        for (int i = 0; i < buildings.Length; i++)
+        {
+            if (buildings[i] > CurrentMaxHeight)
+            {
+                BuildingWithView[Viewcount] = buildings[i];
+                Viewcount++;
+                CurrentMaxHeight = buildings[i];
+            }
+        }
+        return BuildingWithView;
+    }
+
+    public void SaveCurrentArray()
+    {
+        temp = BuildinginView(buildings);
+    }
+
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+}
