@@ -1,55 +1,89 @@
 @page "/fetchdata"
-@inject HttpClient Http
+@using System
+@using System.Collections.Generic;
+@using System.ComponentModel.DataAnnotations;
+@using System.ComponentModel.DataAnnotations.Schema;
+@using BlazorStrap;
 
-<h1>Weather forecast</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
+<h1>Sunset Hills</h1>
+<p>Current ArrayInput: @testingval.arrayInput</p>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<table id="current array">
+    <tr>
+        @for (int i = 0; i < testingval.arrayInput.Length; i++)
+        {
+            <td> @testingval.arrayInput[i] </td>
+
+        }
+    </tr>
+</table>
+
+<p>Current array being pushed</p>
+<table id="currentarray">
+    <tr>
+        @for (int i = 0; i < testingval.buildings.Length; i++)
+        {
+            <td>@testingval.buildings[i]  </td>
+
+        }
+    </tr>
+</table>
+<p>Appling the logic</p>
+<table>
+    <tr>
+        @for (int i = 0; i < BuildinginView(testingval.buildings).Length; i++)
+        {
+            <td>@temp[i]  </td>
+        }
+    </tr>
+</table>
+
+<BSForm Model="@testingval" ValidateOnInit="false">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <BSFormGroup>
+        <BSLabel For="test">Input Array:</BSLabel>
+        <BSInput InputType="InputType.Text" Id="test" @bind-Value="@testingval.arrayInput" ValidateOnChange="true"></BSInput>
+        <BSFormFeedback For="@(() => testingval.arrayInput)" ValidMessage="Sweet! you fixed the issue"></BSFormFeedback>
+    </BSFormGroup>
+</BSForm>
+<BSButton OnClick="SaveCurrentArray">Submit</BSButton>
 
 @code {
-    private WeatherForecast[] forecasts;
-
-    protected override async Task OnInitializedAsync()
+    private Input testingval = new Input();
+    public class Input
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        [StringLength(70, ErrorMessage = "Array to long")]
+        [RegularExpression(@"(\s*([0-9]+)\s*,+\s*)*[0-9]*[^(,(a-z))]", ErrorMessage = "Use the format Num, Num, ...")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "You entered a empty Array")]
+        public string arrayInput { get; set; } = " 2, 7, 4, 5, 3, 2 ";
+        public int[] buildings { get; set; } = { 2, 7, 4, 5, 3, 2 };
+
+    }
+    private int[] temp = new int[10];
+
+    public int[] BuildinginView(int[] buildings)
+    {
+        int CurrentMaxHeight = 0;
+        int Viewcount = 0;
+        int[] BuildingWithView = new int[buildings.Length];
+        for (int i = 0; i < buildings.Length; i++)
+        {
+            if (buildings[i] > CurrentMaxHeight)
+            {
+                BuildingWithView[Viewcount] = buildings[i];
+                Viewcount++;
+                CurrentMaxHeight = buildings[i];
+            }
+        }
+        return BuildingWithView;
     }
 
-    public class WeatherForecast
+
+    public void SaveCurrentArray()
     {
-        public DateTime Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        string[] str_arr = testingval.arrayInput.Split(",").ToArray();
+        testingval.buildings = Array.ConvertAll(str_arr, Int32.Parse);
+        temp = BuildinginView(testingval.buildings);
     }
 }
