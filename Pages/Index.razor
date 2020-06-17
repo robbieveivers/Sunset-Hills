@@ -1,70 +1,56 @@
-﻿@page "/"
-@using System
-@using System.Collections.Generic;
-@using System.ComponentModel.DataAnnotations;
-@using System.ComponentModel.DataAnnotations.Schema;
-@using BlazorStrap;
+﻿
+@page "/"
+@inject HttpClient Http
 
+<h1>Weather forecast</h1>
 
-<h1>Sunset Hills</h1>
-<p>Current ArrayInput: @arrayInput</p>
-<p>Current array being pushed</p>
-@for (int i = 0; i < buildings.Length; i++)
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts == null)
 {
-    <tr>
-        <td>@buildings[i]</td>
-    </tr>
+    <p><em>Loading...</em></p>
 }
-<p>Appling the logic</p>
-<button type="submit" class="btn btn-default" @onclick="SaveCurrentArray">Submit</button>
-@for (int i = 0; i < BuildinginView(buildings).Length; i++)
+else
 {
-    <tr>
-        <td>@temp[i]</td>
-    </tr>
-}
-<p></p>
-<form role="form">
-    <div class="form-group">
-        <label class="control-label" for="@buildings">Array:</label>
-        <input type="text" class="form-control" id="@buildings" placeholder="Enter Array" @bind-value="arrayInput">
-    </div>
-    <button type="button" class="btn btn-default" @onclick="SaveCurrentArray">Submit</button>
-</form>
-@code {
-    private int[] buildings = { 2, 3, 4, 5, 3, 2 };
-
-    private string arrayInput;
-
-    private int[] temp = new int[10];
-
-    public int[] BuildinginView(int[] buildings)
-    {
-        int CurrentMaxHeight = 0;
-        int Viewcount = 0;
-        int[] BuildingWithView = new int[buildings.Length];
-        for (int i = 0; i < buildings.Length; i++)
-        {
-            if (buildings[i] > CurrentMaxHeight)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
             {
-                BuildingWithView[Viewcount] = buildings[i];
-                Viewcount++;
-                CurrentMaxHeight = buildings[i];
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
             }
-        }
-        return BuildingWithView;
-    }
+        </tbody>
+    </table>
+}
 
-    public void SaveCurrentArray()
+@code {
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
     {
-        temp = BuildinginView(buildings);
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    public class WeatherForecast
     {
-        currentCount++;
-    }
+        public DateTime Date { get; set; }
 
+        public int TemperatureC { get; set; }
+
+        public string Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
 }
