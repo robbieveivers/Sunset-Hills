@@ -12,7 +12,10 @@
                 <div class="w-clearfix">
                     <img src="https://i.imgur.com/vkkYk9j.gif" width="480" height="299" alt="Sunrise" class="image-1" />
                     <h1 class="heading">Build Your City!</h1>
-                    <div class="text-blocktop">Enter the building heights to visualise the buildings that can view the sunset.</div>
+                    <div class="text-blocktop">
+                        Enter the building heights to visualise the buildings that can view the sunset.
+                        Use the format Num, Num, ...
+                    </div>
                     <BSForm Model="@testingval" ValidateOnInit="false">
                         <DataAnnotationsValidator></DataAnnotationsValidator>
                         <BSFormGroup>
@@ -23,26 +26,53 @@
                         </BSFormGroup>
                     </BSForm>
                     <BSButton OnClick="SaveCurrentArray">Submit</BSButton>
+                    
                 </div>
                 <div id="Buildings_area" class="div-block1">
-                    @for (int i = 0; i < testingval.buildings.Length; i++)
+                    @if (testingval.buildings.Length > 10)
                     {
-                    <div class="div-blockimg">
+                        <div class="div-blockimg">
 
-                        @for (int ii = 1; ii <= testingval.buildings[i]; ii++)
-                        {
-                            @if (BuildinginView(testingval.buildings)[i] == 0)
-                            {
-                                <img src="@tempurl" height="" alt="" class="image-3" />
-                            }
-                            @if (BuildinginView(testingval.buildings)[i] == 1)
-                            {
-                                <img src="@tempurl" height="" alt="" class="image-4" />
-                            }
+                            <h5>Max number of buildings is 10! Change the number of buildings. </h5>
 
-                        }
-                    </div>
+
+                        </div>
+
                     }
+                    @if (testingval.buildings.Length <= 10)
+                    {
+                        @for (int i = 0; i < testingval.buildings.Length; i++)
+                        {
+                            <div class="div-blockimg">
+                                @if (testingval.buildings[i] >= 6)
+                                {
+                                    <h5>Building height cant be more then 5! Change your building height. </h5>
+
+
+                                }
+                                @if (testingval.buildings[i] < 6)
+                                {
+                                    @for (int ii = 1; ii <= testingval.buildings[i]; ii++)
+                                    {
+                                        @if (BuildinginView(testingval.buildings)[i] == 0)
+                                        {
+                                            <img src="@tempurl" height="" alt="" class="image-3" />
+                                        }
+                                        @if (BuildinginView(testingval.buildings)[i] == 1)
+                                        {
+                                            <img src="@tempurl" height="" alt="" class="image-4" />
+                                        }
+
+                                    }
+
+                                }
+
+
+                            </div>
+                        }
+
+                    }
+
                 </div>
             </div>
         </div>
