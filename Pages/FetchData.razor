@@ -4,51 +4,49 @@
 @using System.ComponentModel.DataAnnotations;
 @using System.ComponentModel.DataAnnotations.Schema;
 @using BlazorStrap;
+    <body>
+        <NavMenu />
+        <div class="containerdata" >
+            <h1>Sunset Hills</h1>
+            <p>Current ArrayInput: @testingval.arrayInput</p>
+            <table id="current array">
+                <tr>
+                    @for (int i = 0; i < testingval.arrayInput.Length; i++)
+                    {
+                        <td> @testingval.arrayInput[i] </td>
 
-
-<h1>Sunset Hills</h1>
-<p>Current ArrayInput: @testingval.arrayInput</p>
-
-<table id="current array">
-    <tr>
-        @for (int i = 0; i < testingval.arrayInput.Length; i++)
-        {
-            <td> @testingval.arrayInput[i] </td>
-
-        }
-    </tr>
-</table>
-
-<p>Current array being pushed</p>
-<table id="currentarray">
-    <tr>
-        @for (int i = 0; i < testingval.buildings.Length; i++)
-        {
-            <td>@testingval.buildings[i]  </td>
-
-        }
-    </tr>
-</table>
-<p>Appling the logic</p>
-<table>
-    <tr>
-        @for (int i = 0; i < BuildinginView(testingval.buildings).Length; i++)
-        {
-            <td>@temp[i]  </td>
-        }
-    </tr>
-</table>
-
-<BSForm Model="@testingval" ValidateOnInit="false">
-    <DataAnnotationsValidator></DataAnnotationsValidator>
-    <BSFormGroup>
-        <BSLabel For="test">Input Array:</BSLabel>
-        <BSInput InputType="InputType.Text" Id="test" @bind-Value="@testingval.arrayInput" ValidateOnChange="true"></BSInput>
-        <BSFormFeedback For="@(() => testingval.arrayInput)" ValidMessage="Sweet! you fixed the issue"></BSFormFeedback>
-    </BSFormGroup>
-</BSForm>
-<BSButton OnClick="SaveCurrentArray">Submit</BSButton>
-
+                    }
+                </tr>
+            </table>
+            <p>Current array being pushed</p>
+            <table id="currentarray">
+                <tr>
+                    @for (int i = 0; i < testingval.buildings.Length; i++)
+                    {
+                        <td>@testingval.buildings[i]  </td>
+                    }
+                </tr>
+            </table>
+            <p>Appling the logic</p>
+            <table>
+                <tr>
+                    @for (int i = 0; i < BuildinginView(testingval.buildings).Length; i++)
+                    {
+                        <td>@temp[i]  </td>
+                    }
+                </tr>
+            </table>
+            <BSForm Model="@testingval" ValidateOnInit="false">
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+                <BSFormGroup>
+                    <BSLabel For="test">Input Array:</BSLabel>
+                    <BSInput InputType="InputType.Text" Id="test" @bind-Value="@testingval.arrayInput" ValidateOnChange="true"></BSInput>
+                    <BSFormFeedback For="@(() => testingval.arrayInput)" ValidMessage="Sweet! you fixed the issue"></BSFormFeedback>
+                </BSFormGroup>
+            </BSForm>
+            <BSButton OnClick="SaveCurrentArray">Submit</BSButton>
+        </div>
+    </body>
 @code {
     private Input testingval = new Input();
     public class Input

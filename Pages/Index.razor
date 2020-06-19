@@ -1,56 +1,128 @@
-﻿
-@page "/"
-@inject HttpClient Http
+﻿@page "/"
+@using System
+@using System.Collections.Generic;
+@using System.ComponentModel.DataAnnotations;
+@using System.ComponentModel.DataAnnotations.Schema;
+@using BlazorStrap;
+<body class="body" data-gr-c-s-loaded="true">
+    <NavMenu />
+    <div class="container1 w-contrainer1">
+        <div class="div-block-4">
+            <div class="w-clearfix">
+                <div class="w-clearfix">
+                    <img src="https://i.imgur.com/vkkYk9j.gif" width="480" height="299" alt="Sunrise" class="image-1" />
+                    <h1 class="heading">Build Your City!</h1>
+                    <div class="text-blocktop">Enter the building heights to visualise the buildings that can view the sunset.</div>
+                    <BSForm Model="@testingval" ValidateOnInit="false">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <BSFormGroup>
+                            <div class="text-center">
+                                <BSInput InputType="InputType.Text" Id="test" @bind-Value="@testingval.arrayInput" ValidateOnChange="true"></BSInput>
+                            </div>
+                            <BSFormFeedback For="@(() => testingval.arrayInput)" ValidMessage="Sweet! you fixed the issue"></BSFormFeedback>
+                        </BSFormGroup>
+                    </BSForm>
+                    <BSButton OnClick="SaveCurrentArray">Submit</BSButton>
+                </div>
+                <div id="Buildings_area" class="div-block1">
+                    @for (int i = 0; i < testingval.buildings.Length; i++)
+                    {
+                    <div class="div-blockimg">
 
-<h1>Weather forecast</h1>
+                        @for (int ii = 1; ii <= testingval.buildings[i]; ii++)
+                        {
+                            @if (BuildinginView(testingval.buildings)[i] == 0)
+                            {
+                                <img src="@tempurl" height="" alt="" class="image-3" />
+                            }
+                            @if (BuildinginView(testingval.buildings)[i] == 1)
+                            {
+                                <img src="@tempurl" height="" alt="" class="image-4" />
+                            }
 
-<p>This component demonstrates fetching data from the server.</p>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
 
 @code {
-    private WeatherForecast[] forecasts;
 
-    protected override async Task OnInitializedAsync()
+
+    static public int randnum()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        var rand = new Random();
+        int result = rand.Next();
+        return result;
     }
 
-    public class WeatherForecast
+    static string[] buildingsurl = { "https://i.imgur.com/VOkWNEI.gif", "https://i.imgur.com/cWpnJ3a.gif" };
+
+
+    static public string picRefresher(string picToRefresh)
     {
-        public DateTime Date { get; set; }
+        string result = picToRefresh + "?"+ randnum();
+        return result;
+    }
 
-        public int TemperatureC { get; set; }
 
-        public string Summary { get; set; }
+    int randbuildingurl;
 
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    static public string[] buildingsurlwithrand = { picRefresher(buildingsurl[0]) };
+    static public string[] buildingsurlwithrand1 = { picRefresher(buildingsurl[1]) };
+
+    public string tempurl = buildingsurlwithrand[0];
+    public string tempurl1 = buildingsurlwithrand[0];
+
+
+
+
+    private Input testingval = new Input();
+
+    public class Input
+    {
+        [StringLength(70, ErrorMessage = "Array to long")]
+        [RegularExpression(@"(\s*([0-9]+)\s*,+\s*)*[0-9]*[^(,(a-z))]", ErrorMessage = "Use the format Num, Num, ...")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "You entered a empty Array")]
+        public string arrayInput { get; set; } = " 2, 2, 1, 1, 3 ";
+        public int[] buildings { get; set; } = { 2, 2, 1, 1, 3 };
+
+    }
+    private int[] temp = new int[10];
+
+    public int[] BuildinginView(int[] buildings)
+    {
+        int CurrentMaxHeight = 0;
+        int Viewcount = 0;
+        int[] BuildingWithView = new int[buildings.Length];
+        for (int i = 0; i < buildings.Length; i++)
+        {
+            if (buildings[i] > CurrentMaxHeight)
+            {
+                BuildingWithView[Viewcount] = 1;
+                Viewcount++;
+                CurrentMaxHeight = buildings[i];
+            }
+            else
+            {
+                BuildingWithView[Viewcount] = 0;
+                Viewcount++;
+
+            }
+        }
+        return BuildingWithView;
+    }
+
+
+    public void SaveCurrentArray()
+    {
+        tempurl = picRefresher(buildingsurl[0]);
+        string[] str_arr = testingval.arrayInput.Split(",").ToArray();
+        testingval.buildings = Array.ConvertAll(str_arr, Int32.Parse);
+        temp = BuildinginView(testingval.buildings);
     }
 }
